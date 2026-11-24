@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GearTrack</title>
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+<noscript><p style="margin:0;padding:.8rem 1rem;background:#fbe9e7;color:#b91c1c;text-align:center;font-family:sans-serif">JavaScript is blocked here. Open this page in Chrome, Edge, Firefox or Safari (not a preview) so the buttons can work.</p></noscript>
+
+<!-- ============ FRONT PAGE (login / create account) ============ -->
+<main id="auth" class="auth">
+  <section class="auth-card">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+        <g class="gear" transform="translate(50 50)" fill="currentColor">
+          <rect x="-6" y="-48" width="12" height="16" rx="3"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(45)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(90)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(135)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(180)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(225)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(270)"/>
+          <rect x="-6" y="-48" width="12" height="16" rx="3" transform="rotate(315)"/>
+          <circle r="36"/>
+        </g>
+        <g transform="translate(50 50)" fill="none" stroke="var(--bg)" stroke-width="3" stroke-linecap="round">
+          <circle r="22"/>
+          <path d="M0-22V22M-22 0H22"/>
+          <path d="M-15.5-15.5Q-6 0-15.5 15.5M15.5-15.5Q6 0 15.5 15.5"/>
+        </g>
+      </svg>
+      <h1 class="logo big">Gear<span>Track</span></h1>
+      <p class="tagline">Sports equipment, kept in order.</p>
+    </div>
+    <p class="intro">GearTrack helps sports coordinators and school staff record equipment, see what is available, borrowed, damaged or missing, and keep inventory accurate, all in one simple place.</p>
+
+    <form id="loginForm" class="form" autocomplete="on" onsubmit="return false">
+      <label>Username
+        <input id="loginUser" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" required>
+      </label>
+      <label>Password
+        <input id="loginPass" type="password" autocapitalize="off" autocomplete="current-password" required>
+      </label>
+      <p class="msg" id="loginMsg" role="alert"></p>
+      <p class="msg" id="jsWarn">Script not loaded: upload all files together, or use the single-file version (index-single.html renamed to index.html).</p>
+      <button class="btn primary" type="submit">Sign in</button>
+    </form>
+  </section>
+  <footer class="foot">Group 7 · BSIT-1105 · Batangas State University · v4</footer>
+</main>
+
+<!-- ============ APP ============ -->
+<div id="app" class="app hidden">
+  <header class="top">
+    <h1 class="logo small">Gear<span>Track</span></h1>
+    <div class="top-right">
+      <span class="who" id="whoami"></span>
+      <button class="btn ghost" id="backupBtn">Backup</button>
+      <button class="btn ghost" id="logoutBtn">Sign out</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="stats" id="stats"></section>
+
+    <section class="toolbar">
+      <input id="search" type="search" placeholder="Search name, category, condition…" aria-label="Search">
+      <select id="filterStatus" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option>Available</option><option>Borrowed</option><option>Damaged</option><option>Missing</option>
+      </select>
+      <select id="sortBy" aria-label="Sort by">
+        <option value="name">Sort: Name</option>
+        <option value="category">Sort: Category</option>
+        <option value="quantity">Sort: Quantity</option>
+      </select>
+      <button class="btn ghost" id="sortDir" title="Toggle order">A → Z</button>
+      <button class="btn primary" id="addBtn">+ Add equipment</button>
+    </section>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Equipment</th><th>Category</th><th class="num">Qty</th><th>Condition</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p class="empty hidden" id="empty">No equipment found.</p>
+    </section>
+  </main>
+</div>
+
+<!-- ============ ADD / EDIT DIALOG ============ -->
+<dialog id="itemDialog">
+  <form id="itemForm" method="dialog" class="form">
+    <h2 id="dialogTitle">Add equipment</h2>
+    <label>Equipment name
+      <input id="fName" type="text" maxlength="60" required>
+    </label>
+    <div class="row2">
+      <label>Category
+        <input id="fCategory" type="text" list="cats" maxlength="30" required>
+        <datalist id="cats">
+          <option>Ball Sports</option><option>Racket Sports</option><option>Track & Field</option>
+          <option>Protective Gear</option><option>Fitness</option><option>Uniform</option>
+        </datalist>
+      </label>
+      <label>Quantity
+        <input id="fQty" type="number" min="0" step="1" required>
+      </label>
+    </div>
+    <div class="row2">
+      <label>Condition
+        <select id="fCondition"><option>Good</option><option>Fair</option><option>Poor</option></select>
+      </label>
+      <label>Status
+        <select id="fStatus"><option>Available</option><option>Borrowed</option><option>Damaged</option><option>Missing</option></select>
+      </label>
+    </div>
+    <p class="msg" id="itemMsg" role="alert"></p>
+    <div class="actions">
+      <button class="btn ghost" type="button" id="cancelItem">Cancel</button>
+      <button class="btn primary" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============ DELETE CONFIRM ============ -->
+<dialog id="delDialog">
+  <form method="dialog" class="form">
+    <h2>Delete equipment?</h2>
+    <p id="delText" class="hint"></p>
+    <div class="actions">
+      <button class="btn ghost" value="cancel">Cancel</button>
+      <button class="btn danger" value="ok" id="confirmDel">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="backupDialog">
+  <div class="form">
+    <h2>Backup &amp; restore</h2>
+    <p class="hint">Copy this text to save your inventory, or paste a saved backup and press Load to add it.</p>
+    <textarea id="backupText" rows="8" spellcheck="false"></textarea>
+    <div class="actions wrap-actions">
+      <button class="btn ghost" type="button" id="copyBackup">Copy</button>
+      <button class="btn ghost" type="button" id="downloadBackup">Download file</button>
+      <button class="btn ghost" type="button" id="fileBackup">Choose file</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button class="btn primary" type="button" id="loadBackup">Load</button>
+    </div>
+    <button class="btn ghost" type="button" id="closeBackup">Close</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script src="scrpt.js?v=4"></script>
+</body>
+</html>
